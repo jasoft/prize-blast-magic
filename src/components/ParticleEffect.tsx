@@ -6,19 +6,23 @@ interface Particle {
   y: number;
   size: number;
   delay: number;
+  emoji: string;
 }
+
+const emojis = ["🎉", "🎊", "⭐", "✨", "🎈", "🎁", "🌟", "💫"];
 
 export const ParticleEffect = ({ show }: { show: boolean }) => {
   const [particles, setParticles] = useState<Particle[]>([]);
 
   useEffect(() => {
     if (show) {
-      const newParticles = Array.from({ length: 50 }, (_, i) => ({
+      const newParticles = Array.from({ length: 30 }, (_, i) => ({
         id: i,
         x: Math.random() * 100,
         y: Math.random() * 100,
-        size: Math.random() * 8 + 4,
+        size: Math.random() * 30 + 20,
         delay: Math.random() * 2,
+        emoji: emojis[Math.floor(Math.random() * emojis.length)],
       }));
       setParticles(newParticles);
     } else {
@@ -33,16 +37,16 @@ export const ParticleEffect = ({ show }: { show: boolean }) => {
       {particles.map((particle) => (
         <div
           key={particle.id}
-          className="absolute rounded-full bg-primary animate-particle-float"
+          className="absolute animate-particle-float"
           style={{
             left: `${particle.x}%`,
             top: `${particle.y}%`,
-            width: `${particle.size}px`,
-            height: `${particle.size}px`,
+            fontSize: `${particle.size}px`,
             animationDelay: `${particle.delay}s`,
-            opacity: 0.8,
           }}
-        />
+        >
+          {particle.emoji}
+        </div>
       ))}
     </div>
   );

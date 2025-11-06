@@ -64,15 +64,15 @@ export const LotteryAnimation = ({
       {displayNames.map((name, index) => (
         <Card
           key={index}
-          className={`p-6 text-center transition-all duration-300 ${
+          className={`p-8 text-center transition-all duration-300 border-4 ${
             index === 2
-              ? "scale-110 border-primary border-4 gold-gradient glow-strong"
-              : "scale-90 opacity-50 bg-card/50"
+              ? "scale-110 border-accent fun-gradient shadow-strong"
+              : "scale-90 opacity-60 bg-white border-primary/30"
           }`}
         >
           <p
-            className={`text-3xl font-bold ${
-              index === 2 ? "text-background" : "gold-text"
+            className={`text-4xl font-bold font-fredoka ${
+              index === 2 ? "text-white" : "rainbow-text"
             }`}
           >
             {name}

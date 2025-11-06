@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
-import { ArrowLeft, Trophy, Sparkles } from "lucide-react";
+import { ArrowLeft, Trophy, Sparkles, Gift, Star } from "lucide-react";
 import { LotteryAnimation } from "@/components/LotteryAnimation";
 import { ParticleEffect } from "@/components/ParticleEffect";
 
@@ -38,7 +38,7 @@ const Lottery = () => {
       .select("name, student_id");
 
     if (error) {
-      toast.error("加载失败");
+      toast.error("加载失败了 😢");
       return;
     }
 
@@ -47,12 +47,12 @@ const Lottery = () => {
 
   const startLottery = () => {
     if (participants.length === 0) {
-      toast.error("没有参与者");
+      toast.error("还没有参与的小伙伴呢 😅");
       return;
     }
 
     if (count > participants.length) {
-      toast.error("抽取人数超过参与者总数");
+      toast.error("抽取人数太多啦 🤔");
       return;
     }
 
@@ -92,58 +92,67 @@ const Lottery = () => {
       setShowParticles(false);
     }, 5000);
 
-    toast.success("抽奖完成！");
+    toast.success("恭喜中奖啦！🎊");
   };
 
   return (
-    <div className="min-h-screen p-4 md:p-8">
+    <div className="min-h-screen p-4 md:p-8 relative">
       <ParticleEffect show={showParticles} />
       
-      <div className="max-w-4xl mx-auto">
+      {/* 装饰性元素 */}
+      <div className="absolute top-10 left-10 text-6xl animate-wiggle">🎈</div>
+      <div className="absolute top-20 right-20 text-6xl animate-bounce-fun">🎁</div>
+      <div className="absolute bottom-20 right-10 text-6xl animate-float">🌟</div>
+
+      <div className="max-w-4xl mx-auto relative z-10">
         <Button
           onClick={() => navigate("/")}
           variant="outline"
-          className="mb-6 border-primary/50 hover:border-primary"
+          className="mb-6 border-2 border-primary hover:border-accent hover:bg-accent hover:text-white font-bold text-lg"
+          size="lg"
         >
-          <ArrowLeft className="mr-2 h-4 w-4" />
-          返回
+          <ArrowLeft className="mr-2 h-5 w-5" />
+          返回首页
         </Button>
 
         <div className="text-center mb-8 animate-float">
-          <div className="relative inline-block">
-            <div className="absolute inset-0 blur-3xl opacity-50 gold-gradient rounded-full animate-pulse-glow" />
-            <h1 className="text-5xl md:text-7xl font-bold gold-text mb-4 relative shine-effect">
-              🎰 幸运抽奖 🎰
-            </h1>
+          <div className="flex items-center justify-center gap-4 mb-4">
+            <Star className="h-12 w-12 text-secondary animate-rainbow-spin" fill="currentColor" />
+            <div className="text-7xl animate-wiggle">🎲</div>
+            <Star className="h-12 w-12 text-accent animate-rainbow-spin" fill="currentColor" />
           </div>
-          <p className="text-xl text-muted-foreground mt-4">
-            参与人数: <span className="text-primary font-bold">{participants.length}</span>
+          <h1 className="text-5xl md:text-7xl font-bold rainbow-text mb-4 font-fredoka shine-effect">
+            幸运大转盘
+          </h1>
+          <p className="text-2xl text-muted-foreground font-comic">
+            参加人数: <span className="text-primary font-bold text-3xl">{participants.length}</span> 位小伙伴 🎊
           </p>
         </div>
 
         {!isRunning && winners.length === 0 && (
-          <Card className="p-8 mb-6 bg-card/80 backdrop-blur border-primary/30">
-            <div className="flex flex-col md:flex-row items-center gap-4 mb-6">
-              <label className="text-xl font-bold gold-text whitespace-nowrap">
-                抽取人数:
+          <Card className="p-8 mb-8 bg-white shadow-strong border-4 border-primary/50">
+            <div className="flex items-center justify-center gap-3 mb-6">
+              <Gift className="h-10 w-10 text-primary animate-wiggle" />
+              <label className="text-3xl font-bold text-primary font-fredoka">
+                要抽几个人呢？
               </label>
-              <Input
-                type="number"
-                min="1"
-                max={participants.length}
-                value={count}
-                onChange={(e) => setCount(Number(e.target.value))}
-                className="text-2xl font-bold text-center bg-background/50 border-primary/30 focus:border-primary"
-              />
             </div>
+            <Input
+              type="number"
+              min="1"
+              max={participants.length}
+              value={count}
+              onChange={(e) => setCount(Number(e.target.value))}
+              className="text-3xl font-bold text-center border-4 border-primary/30 focus:border-primary font-fredoka h-20 mb-6"
+            />
             <Button
               onClick={startLottery}
               disabled={isRunning}
-              className="w-full text-2xl py-8 gold-gradient font-bold glow-gold hover:glow-strong transition-all"
+              className="w-full text-3xl py-10 fun-gradient text-white font-bold shadow-strong hover:scale-105 transition-transform shine-effect"
             >
-              <Sparkles className="mr-3 h-8 w-8" />
-              开始抽奖
-              <Sparkles className="ml-3 h-8 w-8" />
+              <Sparkles className="mr-3 h-10 w-10 animate-wiggle" />
+              开始抽奖啦！
+              <Sparkles className="ml-3 h-10 w-10 animate-wiggle" />
             </Button>
           </Card>
         )}
@@ -161,21 +170,32 @@ const Lottery = () => {
 
         {winners.length > 0 && (
           <div className="space-y-6 animate-bounce-in">
-            <Card className="p-8 bg-gradient-to-br from-primary/20 to-accent/20 backdrop-blur border-primary border-4 glow-strong">
-              <div className="text-center mb-6">
-                <Trophy className="h-20 w-20 mx-auto text-primary animate-pulse-glow" />
-                <h2 className="text-4xl font-bold gold-text mt-4 mb-2">🎉 中奖名单 🎉</h2>
+            <Card className="p-10 bg-gradient-to-br from-primary/20 via-secondary/20 to-accent/20 backdrop-blur border-4 border-accent shadow-strong">
+              <div className="text-center mb-8">
+                <Trophy className="h-24 w-24 mx-auto text-accent animate-bounce-fun" strokeWidth={2.5} />
+                <h2 className="text-5xl font-bold rainbow-text mt-6 mb-4 font-fredoka">
+                  🎉 恭喜中奖 🎉
+                </h2>
+                <p className="text-2xl text-muted-foreground font-comic">太幸运啦！</p>
               </div>
               <div className="space-y-4">
                 {winners.map((winner, index) => (
                   <div
                     key={index}
-                    className="p-6 bg-card rounded-lg border-2 border-primary shine-effect"
+                    className="p-8 bg-white rounded-3xl border-4 border-primary shine-effect hover:scale-105 transition-transform shadow-fun"
                   >
-                    <p className="text-3xl font-bold gold-text text-center">
-                      {winner.name}
-                    </p>
-                    <p className="text-xl text-center text-muted-foreground mt-2">
+                    <div className="flex items-center justify-center gap-4 mb-3">
+                      <span className="text-5xl">
+                        {index === 0 ? "🥇" : index === 1 ? "🥈" : index === 2 ? "🥉" : "🏆"}
+                      </span>
+                      <p className="text-4xl font-bold rainbow-text font-fredoka">
+                        {winner.name}
+                      </p>
+                      <span className="text-5xl">
+                        {index === 0 ? "🥇" : index === 1 ? "🥈" : index === 2 ? "🥉" : "🏆"}
+                      </span>
+                    </div>
+                    <p className="text-2xl text-center text-muted-foreground font-comic">
                       学号: {winner.student_id}
                     </p>
                   </div>
@@ -187,9 +207,11 @@ const Lottery = () => {
                 setWinners([]);
                 setCount(1);
               }}
-              className="w-full text-xl py-6 gold-gradient font-bold"
+              className="w-full text-2xl py-8 rainbow-gradient text-white font-bold shadow-fun hover:shadow-strong hover:scale-105 transition-all"
             >
-              再抽一次
+              <Sparkles className="mr-3 h-8 w-8" />
+              再来一次！
+              <Sparkles className="ml-3 h-8 w-8" />
             </Button>
           </div>
         )}
