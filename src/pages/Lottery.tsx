@@ -21,6 +21,7 @@ const Lottery = () => {
   const [isRunning, setIsRunning] = useState(false);
   const [winners, setWinners] = useState<Participant[]>([]);
   const [showParticles, setShowParticles] = useState(false);
+  const [isLoadingParticipants, setIsLoadingParticipants] = useState(true);
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const winAudioRef = useRef<HTMLAudioElement | null>(null);
 
@@ -30,19 +31,34 @@ const Lottery = () => {
     // 创建音频元素
     audioRef.current = new Audio("data:audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQoGAACBhYqFbF1fdJivrJBhNjVgodDbq2EcBj+a2/LDciUFLIHO8tiJNwgZaLvt559NEAxQp+PwtmMcBjiR1/LMeSwFJHfH8N2QQAoUXrTp66hVFApGn+DyvmwhBSuBzvLTgjMGHm+98OKbSQ0PVqzn77ZnHQU7k9n0z38wBSaAzvLSgC8GH3G+8OWdSw0PV6vl77FcFApGod70wW8dBSt/zPLVgjEGIG++8eieSg0NWLH");
     winAudioRef.current = new Audio("data:audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQoGAACBhYqFbF1fdJivrJBhNjVgodDbq2EcBj+a2/LDciUFLIHO8tiJNwgZaLvt559NEAxQp+PwtmMcBjiR1/LMeSwFJHfH8N2QQAoUXrTp66hVFApGn+DyvmwhBSuBzvLTgjMGHm+98OKbSQ0PVqzn77ZnHQU7k9n0z38wBSaAzvLSgC8GH3G+8OWdSw0PV6vl77FcFApGod70wW8dBSt/zPLVgjEGIG++8eieSg0NWLH");
+
+    return () => {
+      if (audioRef.current) {
+        audioRef.current.pause();
+        audioRef.current.currentTime = 0;
+      }
+      if (winAudioRef.current) {
+        winAudioRef.current.pause();
+        winAudioRef.current.currentTime = 0;
+      }
+    };
   }, []);
 
   const fetchParticipants = async () => {
+    setIsLoadingParticipants(true);
+
     const { data, error } = await supabase
       .from("participants")
       .select("name, student_id");
 
     if (error) {
       toast.error("加载失败了 😢");
-      return;
+      setParticipants([]);
+    } else {
+      setParticipants(data || []);
     }
 
-    setParticipants(data || []);
+    setIsLoadingParticipants(false);
   };
 
   const startLottery = () => {
@@ -140,18 +156,22 @@ const Lottery = () => {
             <Input
               type="number"
               min="1"
-              max={participants.length}
+              max={participants.length || 1}
               value={count}
               onChange={(e) => setCount(Number(e.target.value))}
               className="text-3xl font-bold text-center border-4 border-primary/30 focus:border-primary font-fredoka h-20 mb-6"
             />
             <Button
               onClick={startLottery}
-              disabled={isRunning}
-              className="w-full text-3xl py-10 fun-gradient text-white font-bold shadow-strong hover:scale-105 transition-transform shine-effect"
+              disabled={
+                isRunning || isLoadingParticipants || participants.length === 0
+              }
+              className="w-full text-3xl py-10 fun-gradient text-white font-bold shadow-strong hover:scale-105 transition-transform shine-effect disabled:opacity-60 disabled:cursor-not-allowed disabled:hover:scale-100"
             >
               <Sparkles className="mr-3 h-10 w-10 animate-wiggle" />
-              开始抽奖啦！
+              {isLoadingParticipants
+                ? "正在加载参与者..."
+                : "开始抽奖啦！"}
               <Sparkles className="ml-3 h-10 w-10 animate-wiggle" />
             </Button>
           </Card>
